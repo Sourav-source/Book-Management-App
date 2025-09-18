@@ -1,2 +1,7 @@
-# Book Management App
-React.js dashboard that fetches, displays, and allows CRUD operations on a list of books using a mock API.
+
+1. npm run server - Start JSON server only
+
+2. npm run dev - Start development server
+
+3. go to http://localhost:5173/
+
