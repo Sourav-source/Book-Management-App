@@ -7,7 +7,7 @@ import {
   clearFilters,
 } from '../store/store';
 
-const SearchAndFilters = ({ genres, statuses }) => {
+const SearchAndFilters = ({ genres, statuses, isLoading }) => {
   const dispatch = useDispatch();
   const { searchTerm, selectedGenre, selectedStatus } = useSelector(
     (state) => state.books
@@ -39,7 +39,15 @@ const SearchAndFilters = ({ genres, statuses }) => {
               value={searchTerm}
               onChange={(e) => dispatch(setSearchTerm(e.target.value))}
               className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              disabled={isLoading}
             />
+            {isLoading && (
+              <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                <svg className="w-4 h-4 animate-spin text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+              </div>
+            )}
           </div>
         </div>
 
@@ -52,6 +60,7 @@ const SearchAndFilters = ({ genres, statuses }) => {
             value={selectedGenre}
             onChange={(e) => dispatch(setSelectedGenre(e.target.value))}
             className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
+            disabled={isLoading}
           >
             <option value="">All Genres</option>
             {genres.map((genre) => (
@@ -71,6 +80,7 @@ const SearchAndFilters = ({ genres, statuses }) => {
             value={selectedStatus}
             onChange={(e) => dispatch(setSelectedStatus(e.target.value))}
             className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
+            disabled={isLoading}
           >
             <option value="">All Status</option>
             {statuses.map((status) => (
@@ -88,6 +98,7 @@ const SearchAndFilters = ({ genres, statuses }) => {
           <button
             onClick={handleClearFilters}
             className="text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1 cursor-pointer"
+            disabled={isLoading}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

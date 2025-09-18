@@ -1,12 +1,12 @@
 {
   "books": [
     {
-      "id": "1",
       "title": "To Kill a Mockingbird",
       "author": "Harper Lee",
       "genre": "Fiction",
-      "publishedYear": 1960,
-      "status": "Available"
+      "publishedYear": 1961,
+      "status": "Available",
+      "id": "1"
     },
     {
       "id": "2",

@@ -2,11 +2,11 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { setCurrentPage } from '../store/store';
 
-const Pagination = ({ currentPage, totalPages, totalItems, itemsPerPage }) => {
+const Pagination = ({ currentPage, totalPages, totalItems, itemsPerPage, isLoading }) => {
   const dispatch = useDispatch();
 
   const handlePageChange = (page) => {
-    if (page >= 1 && page <= totalPages) {
+    if (page >= 1 && page <= totalPages && !isLoading) {
       dispatch(setCurrentPage(page));
     }
   };
@@ -44,7 +44,7 @@ const Pagination = ({ currentPage, totalPages, totalItems, itemsPerPage }) => {
   const startItem = (currentPage - 1) * itemsPerPage + 1;
   const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
-  if (totalPages <= 1) {
+  if (totalPages <= 1 || isLoading) {
     return null;
   }
 
@@ -53,14 +53,14 @@ const Pagination = ({ currentPage, totalPages, totalItems, itemsPerPage }) => {
       <div className="flex-1 flex justify-between sm:hidden">
         <button
           onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
+          disabled={currentPage === 1 || isLoading}
           className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
           Previous
         </button>
         <button
           onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
+          disabled={currentPage === totalPages || isLoading}
           className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
           Next
@@ -79,7 +79,7 @@ const Pagination = ({ currentPage, totalPages, totalItems, itemsPerPage }) => {
             {/* Previous Button */}
             <button
               onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
+              disabled={currentPage === 1 || isLoading}
               className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               <span className="sr-only">Previous</span>
@@ -105,11 +105,12 @@ const Pagination = ({ currentPage, totalPages, totalItems, itemsPerPage }) => {
                 <button
                   key={page}
                   onClick={() => handlePageChange(page)}
+                  disabled={isLoading}
                   className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium cursor-pointer ${
                     currentPage === page
                       ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
                       : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
-                  }`}
+                  } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   {page}
                 </button>
@@ -119,7 +120,7 @@ const Pagination = ({ currentPage, totalPages, totalItems, itemsPerPage }) => {
             {/* Next Button */}
             <button
               onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
+              disabled={currentPage === totalPages || isLoading}
               className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               <span className="sr-only">Next</span>

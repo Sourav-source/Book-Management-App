@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query"; // Add useQueryClient
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
 import { apiService } from "../services/api";
 import BookTable from "./BookTable";
@@ -13,19 +13,19 @@ const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingBook, setEditingBook] = useState(null);
   const [deleteBook, setDeleteBook] = useState(null);
-  const queryClient = useQueryClient(); // Get query client
+  const queryClient = useQueryClient();
 
   const { searchTerm, selectedGenre, selectedStatus, currentPage } =
     useSelector((state) => state.books);
 
-  // Use proper query key and add refetch options
   const {
     data: books = [],
     isLoading,
     error,
     isError,
+    refetch,
   } = useQuery({
-    queryKey: ["books"], // Important: unique key for caching
+    queryKey: ["books"],
     queryFn: apiService.getBooks,
     retry: 2,
   });
@@ -73,17 +73,15 @@ const Dashboard = () => {
   const handleModalClose = () => {
     setIsModalOpen(false);
     setEditingBook(null);
-    // Invalidate and refetch the books query to get fresh data
     queryClient.invalidateQueries({ queryKey: ["books"] });
   };
 
   const handleDeleteConfirm = () => {
     setDeleteBook(null);
-    // Invalidate and refetch the books query to get fresh data
     queryClient.invalidateQueries({ queryKey: ["books"] });
   };
 
-  if (error) {
+  if (isError) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
@@ -101,49 +99,39 @@ const Dashboard = () => {
     );
   }
 
-  // Add this temporarily for debugging
-  console.log("React Query state:", {
-    isLoading,
-    isError,
-    error,
-    booksData: books,
-    booksLength: books.length,
-  });
-
   return (
     <div className="space-y-6">
       {/* Header with Add Book Button */}
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Book Collection</h2>
-          <p className="text-gray-600">
-            {filteredBooks.length} book{filteredBooks.length !== 1 ? "s" : ""}{" "}
-            found
-          </p>
+          {!isLoading && (
+            <p className="text-gray-600">
+              {filteredBooks.length} book{filteredBooks.length !== 1 ? "s" : ""}{" "}
+              found
+            </p>
+          )}
         </div>
         <button
           onClick={handleAddBook}
           className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center gap-2 transition-colors cursor-pointer"
+          disabled={isLoading}
         >
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 4v16m8-8H4"
-            />
-          </svg>
+          {isLoading ? (
+            <svg className="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+            </svg>
+          ) : (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+          )}
           Add New Book
         </button>
       </div>
 
       {/* Search and Filters */}
-      <SearchAndFilters genres={genres} statuses={statuses} />
+      <SearchAndFilters genres={genres} statuses={statuses} isLoading={isLoading} />
 
       {/* Books Table/Grid */}
       {isLoading ? (
